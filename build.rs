@@ -63,9 +63,21 @@ fn main() {
     );
 
     if windows && static_linking {
+        // TODO: extract this data from mesos.
         for dep in [
-            "user32", "kernel32", "gdi32", "comctl32", "uxtheme", "msimg32", "comdlg32", "d2d1",
-            "dwrite", "ole32", "oleaut32", "oleacc", "uuid",
+            "user32",
+            "kernel32",
+            "gdi32",
+            "comctl32",
+            "uxtheme",
+            "msimg32",
+            "comdlg32",
+            "d2d1",
+            "dwrite",
+            "ole32",
+            "oleaut32",
+            "oleacc",
+            "uuid",
         ]
         .iter()
         {
@@ -116,7 +128,7 @@ where
     };
     if !out.status.success() {
         // This does not work great on Windows with non-ascii output,
-        // but for now it's good enough.
+        // but for now it"s good enough.
         let errtext = String::from_utf8_lossy(&out.stderr);
         let outtext = String::from_utf8_lossy(&out.stdout);
         panic!("{:?} invocation failed:\n{}\n{}", cmd, outtext, errtext);
