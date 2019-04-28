@@ -1,0 +1,17 @@
+[package]
+name = "libui-sys"
+version = "0.1.0"
+authors = ["MOZGIII <mike-n@narod.ru>"]
+edition = "2018"
+
+description = "Low-level rust bindings for libui"
+license = "MIT"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.49"
+embed-resource = "1.2"
+
+[features]
+static = []
