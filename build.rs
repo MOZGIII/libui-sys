@@ -22,7 +22,11 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 
-    // Prepare linking option.
+    // Determine target properties.
+    let target = env::var("TARGET").unwrap();
+    let msvc = target.contains("msvc");
+
+    // Prepare linking options.
     let static_linking = env::var_os("LIBUI_SYS_STATIC_BUILD").is_some()
         || env::var_os("CARGO_FEATURE_STATIC").is_some();
 
@@ -37,8 +41,9 @@ fn main() {
         build_out_path.to_str().unwrap()
     );
     println!(
-        "cargo:rustc-link-lib={}=libui",
-        if static_linking { "static" } else { "dylib" }
+        "cargo:rustc-link-lib={}={}",
+        if static_linking { "static" } else { "dylib" },
+        if msvc { "libui" } else { "ui" }
     );
 
     // Embed manifests.
