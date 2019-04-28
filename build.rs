@@ -78,6 +78,7 @@ fn main() {
             "oleaut32",
             "oleacc",
             "uuid",
+            "windowscodecs",
         ]
         .iter()
         {
