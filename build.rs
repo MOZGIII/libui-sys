@@ -1,5 +1,6 @@
 use std::env;
 use std::ffi::OsStr;
+use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -36,6 +37,16 @@ fn main() {
 
     // Link library.
     let build_out_path = build_path.join("meson-out");
+    if msvc && static_linking {
+        // See https://github.com/mesonbuild/meson/issues/1412
+        // With MSVC Rust searches for "<name-without-lib>.lib", but meson
+        // generates "<name-with-lib>.a". Make them play together.
+        fs::copy(
+            build_out_path.join("libui.a"),
+            build_out_path.join("ui.lib"),
+        )
+        .unwrap();
+    }
     println!(
         "cargo:rustc-link-search=native={}",
         build_out_path.to_str().unwrap()
@@ -43,15 +54,17 @@ fn main() {
     println!(
         "cargo:rustc-link-lib={}={}",
         if static_linking { "static" } else { "dylib" },
-        if msvc { "libui" } else { "ui" }
+        if msvc && !static_linking {
+            "libui"
+        } else {
+            "ui"
+        }
     );
 
-    // Embed manifests.
-    embed_resource::compile(if static_linking {
-        "static_resources.rc"
-    } else {
-        "shared_resources.rc"
-    })
+    // Embed manifests for shared library.
+    if !static_linking {
+        embed_resource::compile("shared_resources.rc");
+    }
 }
 
 fn run_meson<L, D>(lib: L, dir: D, static_linking: bool)
@@ -68,6 +81,7 @@ where
                 dir.as_ref(),
                 OsStr::new("--default-library"),
                 OsStr::new(if static_linking { "static" } else { "shared" }),
+                OsStr::new("--buildtype=release"),
             ],
         );
     }
