@@ -26,6 +26,7 @@ fn main() {
     // Determine target properties.
     let target = env::var("TARGET").unwrap();
     let msvc = target.contains("msvc");
+    let windows = target.contains("windows");
 
     // Prepare linking options.
     let static_linking = env::var_os("LIBUI_SYS_STATIC_BUILD").is_some()
@@ -60,6 +61,17 @@ fn main() {
             "ui"
         }
     );
+
+    if windows && static_linking {
+        for dep in [
+            "user32", "kernel32", "gdi32", "comctl32", "uxtheme", "msimg32", "comdlg32", "d2d1",
+            "dwrite", "ole32", "oleaut32", "oleacc", "uuid",
+        ]
+        .iter()
+        {
+            println!("cargo:rustc-link-lib=dylib={}", dep);
+        }
+    }
 
     // Embed manifests for shared library.
     if !static_linking {
