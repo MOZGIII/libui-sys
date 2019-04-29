@@ -27,6 +27,7 @@ fn main() {
     let target = env::var("TARGET").unwrap();
     let msvc = target.contains("msvc");
     let windows = target.contains("windows");
+    let linux = target.contains("linux");
 
     // Prepare linking options.
     let static_linking = env::var_os("LIBUI_SYS_STATIC_BUILD").is_some()
@@ -62,27 +63,35 @@ fn main() {
         }
     );
 
-    if windows && static_linking {
-        // TODO: extract this data from mesos.
-        for dep in [
-            "user32",
-            "kernel32",
-            "gdi32",
-            "comctl32",
-            "uxtheme",
-            "msimg32",
-            "comdlg32",
-            "d2d1",
-            "dwrite",
-            "ole32",
-            "oleaut32",
-            "oleacc",
-            "uuid",
-            "windowscodecs",
-        ]
-        .iter()
-        {
-            println!("cargo:rustc-link-lib=dylib={}", dep);
+    if static_linking {
+        if windows {
+            // TODO: extract this data from mesos.
+            for dep in [
+                "user32",
+                "kernel32",
+                "gdi32",
+                "comctl32",
+                "uxtheme",
+                "msimg32",
+                "comdlg32",
+                "d2d1",
+                "dwrite",
+                "ole32",
+                "oleaut32",
+                "oleacc",
+                "uuid",
+                "windowscodecs",
+            ]
+            .iter()
+            {
+                println!("cargo:rustc-link-lib=dylib={}", dep);
+            }
+        }
+        if linux {
+            pkg_config::Config::new()
+                .atleast_version("3.10.0")
+                .probe("gtk+-3.0")
+                .unwrap();
         }
     }
 

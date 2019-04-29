@@ -12,6 +12,7 @@ license = "MIT"
 [build-dependencies]
 bindgen = "0.49"
 embed-resource = "1.2"
+pkg-config = "0.3"
 
 [features]
 static = []
