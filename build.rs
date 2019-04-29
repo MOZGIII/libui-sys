@@ -53,6 +53,9 @@ fn main() {
     if linux && !static_linking {
         // Symlink the shared library from versioned name to a non-versioned
         // name to len liner (ld) find it.
+        if std::fs::read_link("libui.so").is_ok() {
+            let _ = fs::remove_file("libui.so");
+        }
         symlink_file(
             build_out_path.join("libui.so.0"),
             build_out_path.join("libui.so"),
