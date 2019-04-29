@@ -49,6 +49,15 @@ fn main() {
         )
         .unwrap();
     }
+    if linux && !static_linking {
+        // Symlink the shared library from versioned name to a non-versioned
+        // name to len liner (ld) find it.
+        std::os::unix::fs::symlink(
+            build_out_path.join("libui.so.0"),
+            build_out_path.join("libui.so"),
+        )
+        .unwrap();
+    }
     println!(
         "cargo:rustc-link-search=native={}",
         build_out_path.to_str().unwrap()
