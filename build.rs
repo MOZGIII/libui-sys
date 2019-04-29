@@ -1,6 +1,7 @@
 use std::env;
 use std::ffi::OsStr;
 use std::fs;
+use std::io;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -52,7 +53,7 @@ fn main() {
     if linux && !static_linking {
         // Symlink the shared library from versioned name to a non-versioned
         // name to len liner (ld) find it.
-        std::os::unix::fs::symlink(
+        symlink_file(
             build_out_path.join("libui.so.0"),
             build_out_path.join("libui.so"),
         )
@@ -161,4 +162,14 @@ where
     let mut path = PathBuf::from(dir.as_ref());
     path.push("build.ninja");
     return path.exists();
+}
+
+#[cfg(windows)]
+fn symlink_file<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Result<()> {
+    std::os::windows::fs::symlink_file(src, dst)
+}
+
+#[cfg(not(windows))]
+fn symlink_file<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> io::Result<()> {
+    std::os::unix::fs::symlink(src, dst)
 }
