@@ -1,17 +1,18 @@
 language: rust
+cache: cargo
+
 rust:
   - stable
   - beta
   - nightly
 
-matrix:
-  allow_failures:
-    - rust: nightly
-  fast_finish: true
+os:
+  - linux
+  - windows
+  - osx
 
-cache: cargo
+dist: bionic
 
-dist: xenial
 addons:
   apt:
     packages:
@@ -19,12 +20,28 @@ addons:
       - python3
       - python3-pip
       - python3-setuptools
+      - python3-wheel
       - ninja-build
+  homebrew:
+    packages:
+      - python3
+      - ninja
+
+matrix:
+  include:
+    - os: windows
+      before_install:
+        - choco install -y python3 ninja
+  allow_failures:
+    - rust: nightly
+  fast_finish: true
 
 install:
-  - pip3 install --user meson
-  - rustup update nightly
-  - rustup run nightly cargo install -f rustfmt-nightly
+  - pip3 install meson
+  - rustup component add rustfmt
+
+env:
+  - RUST_BACKTRACE=1
 
 script:
   - cargo test --verbose
