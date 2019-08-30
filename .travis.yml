@@ -11,7 +11,7 @@ matrix:
 
 cache: cargo
 
-dist: xenial
+dist: bionic
 addons:
   apt:
     packages:
