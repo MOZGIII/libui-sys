@@ -22,9 +22,11 @@ addons:
       - ninja-build
 
 install:
-  - pip3 install --user meson
-  - rustup update nightly
-  - rustup run nightly cargo install -f rustfmt-nightly
+  - pip3 install meson
+  - rustup component add rustfmt
+
+env:
+  - RUST_BACKTRACE=1
 
 script:
   - cargo test --verbose
