@@ -19,7 +19,7 @@ fn main() {
         .generate()
         .expect("Unable to generate bindings");
 
-    let out_path = PathBuf::from(env::var_os("OUT_DIR").unwrap());
+    let out_path = PathBuf::from(env::var_os("OUT_DIR").expect("Unable to read OUT_DIR env var"));
     bindings
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
@@ -48,19 +48,19 @@ fn main() {
             build_out_path.join("libui.a"),
             build_out_path.join("ui.lib"),
         )
-        .unwrap();
+        .expect("Unable to copy libui.a to ui.lib");
     }
     if linux && !static_linking {
         // Symlink the shared library from versioned name to a non-versioned
         // name to len liner (ld) find it.
         if std::fs::read_link("libui.so").is_ok() {
-            let _ = fs::remove_file("libui.so");
+            let _ = fs::remove_file("libui.so").expect("Unable to remove libui.so");
         }
         symlink_file(
             build_out_path.join("libui.so.0"),
             build_out_path.join("libui.so"),
         )
-        .unwrap();
+        .expect("Unable to symlink libui.so.0 to libui.so");
     }
     println!(
         "cargo:rustc-link-search=native={}",
@@ -104,7 +104,7 @@ fn main() {
             pkg_config::Config::new()
                 .atleast_version("3.10.0")
                 .probe("gtk+-3.0")
-                .unwrap();
+                .expect("Unable to perform pkg-config search");
         }
     }
 
