@@ -80,7 +80,7 @@ fn main() {
 
     if static_linking {
         if windows {
-            // TODO: extract this data from mesos.
+            // TODO: extract this data from meson.
             for dep in [
                 "user32",
                 "kernel32",
