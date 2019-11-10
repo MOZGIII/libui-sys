@@ -34,6 +34,11 @@ fn main() {
     let static_linking = env::var_os("LIBUI_SYS_STATIC_BUILD").is_some()
         || env::var_os("CARGO_FEATURE_STATIC").is_some();
 
+    if msvc && !static_linking {
+        // Detect windres executable location and populate the env var for meson.
+        detect_windres_msvc();
+    }
+
     // Build library.
     let build_path = out_path.join("build");
     run_meson("libui", &build_path, static_linking);
@@ -113,6 +118,24 @@ fn main() {
     // Embed manifests for shared library.
     if !static_linking {
         embed_resource::compile("shared_resources.rc");
+    }
+}
+
+fn detect_windres_msvc() {
+    if std::env::var_os("DO_NOT_DETECT_WINDRES") != None {
+        return;
+    }
+
+    if std::env::var_os("WINDRES") == None {
+        let sdk_info = find_winsdk::SdkInfo::find(find_winsdk::SdkVersion::Any)
+            .expect("Error: finding Win SDK errored out");
+
+        if let Some(sdk_info) = sdk_info {
+            std::env::set_var(
+                "WINDRES",
+                sdk_info.installation_folder().join("bin/x86/rc.exe"),
+            )
+        }
     }
 }
 

@@ -13,6 +13,7 @@ license = "MIT"
 bindgen = "> 0.49, < 1"
 embed-resource = "1.3"
 pkg-config = "0.3"
+find-winsdk = "0.2"
 
 [features]
 static = []
