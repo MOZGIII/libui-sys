@@ -154,6 +154,7 @@ where
                 OsStr::new("--default-library"),
                 OsStr::new(if static_linking { "static" } else { "shared" }),
                 OsStr::new("--buildtype=release"),
+                OsStr::new("--backend=ninja"),
             ],
         );
     }
