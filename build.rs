@@ -121,6 +121,7 @@ fn main() {
     }
 }
 
+#[cfg(target_os = "windows")]
 fn detect_windres_msvc() {
     if std::env::var_os("DO_NOT_DETECT_WINDRES") != None {
         return;
@@ -137,6 +138,11 @@ fn detect_windres_msvc() {
             )
         }
     }
+}
+
+#[cfg(not(target_os = "windows"))]
+fn detect_windres_msvc() {
+    // noop
 }
 
 fn run_meson<L, D>(lib: L, dir: D, static_linking: bool)
