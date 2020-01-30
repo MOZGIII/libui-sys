@@ -30,6 +30,8 @@ install:
   - set PYTHON_ROOT=C:\Python37-x64
   # Add neccessary paths to PATH variable
   - set PATH=%cd%;C:\ninja-build;%PYTHON_ROOT%;%PYTHON_ROOT%\Scripts;%PATH%
+  # Add llvm-config.exe to the path
+  - set PATH=%PATH%;C:\Libraries\llvm-5.0.0\bin
   # Install meson
   - pip install meson
   # Enable Visual Studio 2017
