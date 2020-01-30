@@ -21,6 +21,8 @@ cache:
   - 'C:\Users\appveyor\.cargo'
 
 install:
+  # Checkout submodules
+  - git submodule update --init --recursive
   # Download ninja
   - mkdir C:\ninja-build
   - ps: (new-object net.webclient).DownloadFile('https://github.com/mesonbuild/cidata/raw/master/ninja.exe', 'C:\ninja-build\ninja.exe')

@@ -6,13 +6,6 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 fn main() {
-    // Prepare source.
-    if !Path::new("libui/.git").exists() {
-        let _ = Command::new("git")
-            .args(&["submodule", "update", "--init", "--recursive"])
-            .status();
-    }
-
     // Generate bindings.
     let bindings = bindgen::Builder::default()
         .header("libui/ui.h")
