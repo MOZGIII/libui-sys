@@ -125,10 +125,17 @@ fn detect_windres_msvc() {
             .expect("Error: finding Win SDK errored out");
 
         if let Some(sdk_info) = sdk_info {
-            std::env::set_var(
-                "WINDRES",
-                sdk_info.installation_folder().join("bin/x86/rc.exe"),
-            )
+            let sdk_folder = sdk_info.installation_folder();
+
+            let windres_path = match env::var("CARGO_CFG_TARGET_ARCH") {
+                Ok(ref arch) if arch == "x86_64" => sdk_folder.join("bin/x64/rc.exe"),
+                Ok(ref arch) if arch == "x86" => sdk_folder.join("bin/x86/rc.exe"),
+                Ok(other) => panic!{"Unsupported target architecture: {}", other},
+                Err(e) => panic!{"Error getting target arch {}", e}
+            };
+
+            // double-quote path to escape spaces
+            std::env::set_var("WINDRES", format!(r#""{}""#, windres_path.display()))
         }
     }
 }
